@@ -47,22 +47,28 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
-  private
+  def following
+    @title = "Following"
+    @user = User.find(params[:id])
+    @users = @user.followed_users.paginate(page: params[:page])
+    render 'show_follow'
+  end
 
-    def signed_in_user
-      unless signed_in?
-        store_location
-        redirect_to signin_url, notice: "Please sign in."
-      end
-    end
+  def followers
+    @title = "Followers"
+    @user = User.find(params[:id])
+    @users = @user.followers.paginate(page: params[:page])
+    render 'show_follow'
+  end
+
+  private
 
     def correct_user
       @user = User.find(params[:id])
-      redirect_to(root_path) unless current_user?(@user)
+      redirect_to(root_url) unless current_user?(@user)
     end
 
     def admin_user
-      redirect_to(root_path) unless current_user.admin?
+      redirect_to(root_url) unless current_user.admin?
     end
-  end
 end
